@@ -19,7 +19,7 @@ const CONFIG = {
   BRANDS: [
     { key: '메가MGC커피',  label: '메가커피', query: '메가MGC커피',  short: '메가',   color: '#bf360c', bg: '#fff3e0', pin: 'M' },
     { key: '컴포즈커피',   label: '컴포즈',   query: '컴포즈커피',   short: '컴포즈', color: '#1b5e20', bg: '#e8f5e9', pin: 'C' },
-    { key: '빽다방',       label: '빽다방',   query: '빽다방',       short: '빽',     color: '#e65100', bg: '#fffde7', pin: 'P' },
+    { key: '빽다방',       label: '빽다방',   query: '빽다방',       short: '빽다방', color: '#e65100', bg: '#fffde7', pin: 'P' },
     { key: '매머드커피',   label: '매머드',   query: '매머드커피',   short: '매머드', color: '#880e4f', bg: '#fce4ec', pin: 'E' },
     { key: '더벤티',       label: '더벤티',   query: '더벤티',       short: '벤티',   color: '#0d47a1', bg: '#e3f2fd', pin: 'V' },
     { key: '하삼동커피',   label: '하삼동',   query: '하삼동커피',   short: '하삼동', color: '#4e342e', bg: '#efebe9', pin: 'H' },
