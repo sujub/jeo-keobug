@@ -336,8 +336,6 @@ const App = (() => {
     MapManager.init();
     bindEvents();
     bindAddrModal();
-
-    // 슬라이드 패널 초기화
     initMapPanel();
 
     // 기본 탭이 '지도'이므로 초기에 map-mode 적용 후 재렌더링
@@ -354,17 +352,20 @@ const App = (() => {
       if (loc.lat) runSearch(loc.lat, loc.lng);
     });
 
-    try {
-      const { lat, lng } = await getLocation();
-      MapManager.setMyLocation(lat, lng);
-      const addr = await getAddress(lat, lng);
-      UIManager.setLocLabel(addr);
-      await runSearch(lat, lng);
-    } catch (err) {
-      UIManager.setLocLabel('위치 미설정');
-      UIManager.setLoading(false);
-      openAddrModal();
-    }
+    // 개인정보 동의 확인 후 위치 탐색 시작
+    UIManager.showPrivacyModal(async () => {
+      try {
+        const { lat, lng } = await getLocation();
+        MapManager.setMyLocation(lat, lng);
+        const addr = await getAddress(lat, lng);
+        UIManager.setLocLabel(addr);
+        await runSearch(lat, lng);
+      } catch (err) {
+        UIManager.setLocLabel('위치 미설정');
+        UIManager.setLoading(false);
+        openAddrModal();
+      }
+    });
   }
 
   return { init };

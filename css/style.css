@@ -534,6 +534,81 @@ body.map-mode .map-panel { display: flex; }
 }
 .backdrop.show { opacity: 1; pointer-events: auto; }
 
+/* ─── 개인정보 동의 모달 ────────────────────── */
+.privacy-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9999;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.privacy-modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.privacy-box {
+  background: var(--card-bg);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 22px 28px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.privacy-logo { font-size: 36px; text-align: center; }
+.privacy-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--green-dark);
+  text-align: center;
+}
+.privacy-body { display: flex; flex-direction: column; gap: 14px; }
+.privacy-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.privacy-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.privacy-item strong { font-size: 13px; color: var(--text); display: block; margin-bottom: 4px; }
+.privacy-item p { font-size: 12px; color: var(--text-sub); line-height: 1.6; margin: 0; }
+.privacy-item p strong { display: inline; color: var(--green-dark); }
+.privacy-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--green-dark);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.privacy-btn:active { background: var(--green-main); }
+.privacy-note {
+  text-align: center;
+  font-size: 11px;
+  color: #bbb;
+  margin: 0;
+}
+
 /* ─── 주소 모달 ─────────────────────────────── */
 .addr-modal {
   position: fixed;

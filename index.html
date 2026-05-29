@@ -89,6 +89,39 @@
     <button class="nav" data-tab="me"><span>👤</span><span>내정보</span></button>
   </nav>
 
+  <!-- 개인정보 동의 모달 (최초 1회) -->
+  <div class="privacy-modal" id="privacyModal">
+    <div class="privacy-box">
+      <div class="privacy-logo">🐝</div>
+      <div class="privacy-title">저커버그 서비스 이용 안내</div>
+      <div class="privacy-body">
+        <div class="privacy-item">
+          <span class="privacy-icon">📍</span>
+          <div>
+            <strong>위치 정보 수집·이용</strong>
+            <p>주변 저가 커피 매장 탐색을 위해 현재 위치 정보를 사용합니다.<br>수집된 위치 정보는 <strong>서버에 저장되지 않으며</strong>, 매장 검색 목적으로만 사용됩니다.</p>
+          </div>
+        </div>
+        <div class="privacy-item">
+          <span class="privacy-icon">🗺️</span>
+          <div>
+            <strong>제3자 서비스 이용</strong>
+            <p>지도 및 장소 검색에 <strong>카카오맵 API</strong>를 사용합니다.<br>카카오 개인정보처리방침이 함께 적용됩니다.</p>
+          </div>
+        </div>
+        <div class="privacy-item">
+          <span class="privacy-icon">🔒</span>
+          <div>
+            <strong>개인정보 미수집</strong>
+            <p>회원가입·로그인 없이 이용 가능하며, 개인 식별 정보를 수집하지 않습니다.</p>
+          </div>
+        </div>
+      </div>
+      <button class="privacy-btn" id="privacyConfirmBtn">확인하고 시작하기</button>
+      <p class="privacy-note">이 안내는 최초 1회만 표시됩니다</p>
+    </div>
+  </div>
+
   <!-- 지도 모드 슬라이드업 목록 패널 -->
   <div class="map-panel" id="mapPanel">
     <div class="map-panel-handle" id="mapPanelHandle">
