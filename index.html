@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>저커버그 — 내 주변 저가커피</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 상태바 -->
+  <div class="status-bar">
+    <span id="clock">00:00</span>
+    <div class="status-icons"><span>●●●</span><span>📶</span><span>🔋</span></div>
+  </div>
+
+  <!-- 헤더 -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="logo">
+        <img class="logo-bug" src="images/character-nobg.png" alt="저커버그 캐릭터">
+        <div>
+          <div class="logo-title">저커버그</div>
+          <div class="logo-sub"><strong>저</strong>가<strong>커</strong>피를 찾아다니는 <strong>버그</strong></div>
+        </div>
+      </div>
+      <div class="loc-pill">
+        <span>📍</span>
+        <span id="locText">위치 확인 중...</span>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="searchInput" type="text" placeholder="브랜드·매장명 검색" autocomplete="off">
+      </div>
+      <button class="radius-btn" id="radiusBtn"><span id="radiusLabel">1km</span></button>
+    </div>
+  </header>
+
+  <!-- 브랜드 필터 -->
+  <div class="brand-filters">
+    <button class="chip active" data-brand="all">전체</button>
+    <button class="chip" data-brand="메가MGC커피">메가</button>
+    <button class="chip" data-brand="컴포즈커피">컴포즈</button>
+    <button class="chip" data-brand="빽다방">빽다방</button>
+    <button class="chip" data-brand="매머드커피">매머드</button>
+    <button class="chip" data-brand="더벤티">더벤티</button>
+    <button class="chip" data-brand="하삼동커피">하삼동</button>
+    <button class="chip" data-brand="우지커피">우지커피</button>
+  </div>
+
+  <!-- 지도 -->
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="map-loading" id="mapLoading" style="display:none">
+      <div class="spinner"></div>
+      <span>탐색 중...</span>
+    </div>
+    <button class="my-loc-btn" id="myLocBtn" title="내 위치로">⊕</button>
+    <div class="count-badge" id="countBadge">매장 0개</div>
+  </div>
+
+  <!-- 결과바 -->
+  <div class="result-bar">
+    <span id="resultText">위치를 허용해 주세요</span>
+    <div class="sort-btns">
+      <button class="sort active" data-sort="distance">거리순</button>
+      <button class="sort" data-sort="name">이름순</button>
+    </div>
+  </div>
+
+  <!-- 매장 목록 -->
+  <div class="store-list" id="storeList">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">☕</div>
+      <p>매장을 탐색하려면<br>위치를 허용해 주세요</p>
+      <small>⊕ 버튼을 눌러 시작하세요</small>
+    </div>
+  </div>
+
+  <!-- 하단 내비게이션 -->
+  <nav class="bottom-nav">
+    <button class="nav active" data-tab="map"><span>🗺️</span><span>지도</span></button>
+    <button class="nav" data-tab="list"><span>📋</span><span>목록</span></button>
+    <button class="nav" data-tab="fav"><span>❤️</span><span>즐겨찾기</span></button>
+    <button class="nav" data-tab="me"><span>👤</span><span>내정보</span></button>
+  </nav>
+
+  <!-- 바텀시트 (fixed overlay) -->
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle" id="sheetHandle"></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- 주소 검색 모달 (fixed overlay) -->
+  <div class="addr-modal" id="addrModal">
+    <div class="addr-modal-box">
+      <div class="addr-modal-title">📍 위치 설정</div>
+      <p class="addr-modal-desc">위치 권한 거부 시 주소로 검색하세요</p>
+      <div class="addr-input-wrap">
+        <input id="addrInput" type="text" placeholder="예) 강남역, 홍대입구, 서울 마포구">
+        <button id="addrSearchBtn">검색</button>
+      </div>
+      <ul class="addr-results" id="addrResults"></ul>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="js/keys.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (async function () {
+      // 1순위: keys.js (로컬 개발용)
+      var key = (typeof KAKAO_KEYS !== 'undefined' && KAKAO_KEYS.JS_KEY) ? KAKAO_KEYS.JS_KEY : '';
+
+      // 2순위: /api/config (Vercel 프로덕션 — 환경변수에서 주입)
+      if (!key) {
+        try {
+          var resp = await fetch('/api/config');
+          if (resp.ok) {
+            var cfg = await resp.json();
+            key = cfg.jsKey || '';
+          }
+        } catch (e) { /* 로컬 환경에서 /api/config 없으면 무시 */ }
+      }
+
+      if (!key) {
+        document.getElementById('resultText').textContent = 'API 키 미설정 — js/keys.js 또는 Vercel 환경변수를 확인하세요';
+        return;
+      }
+
+      var s = document.createElement('script');
+      s.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + key + '&libraries=services&autoload=false';
+      s.onload = function () { kakao.maps.load(App.init); };
+      s.onerror = function () {
+        document.getElementById('resultText').textContent = '카카오맵 SDK 로드 실패. 도메인 등록을 확인하세요.';
+      };
+      document.head.appendChild(s);
+    })();
+  </script>
+</body>
+</html>

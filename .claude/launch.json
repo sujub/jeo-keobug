@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "저커버그",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["serve.js", "3001"],
+      "port": 3001
+    }
+  ]
+}
