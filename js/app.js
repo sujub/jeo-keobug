@@ -133,6 +133,38 @@ const App = (() => {
     if (panel) panel.classList.remove('expanded');
   }
 
+  // ── 지도 위 브랜드 필터바 ───────────────────────────────
+  function syncChips(brand) {
+    document.querySelectorAll('.chip, .map-chip').forEach(c =>
+      c.classList.toggle('active', c.dataset.brand === brand)
+    );
+  }
+
+  function initMapBrandBar() {
+    const bar = document.getElementById('mapBrandBar');
+    if (!bar) return;
+
+    // 전체 버튼 + 브랜드 목록 동적 생성
+    bar.innerHTML = '';
+    [{ key: 'all', short: '전체' }, ...CONFIG.BRANDS].forEach(b => {
+      const btn = document.createElement('button');
+      btn.className = 'map-chip' + (b.key === 'all' ? ' active' : '');
+      btn.dataset.brand = b.key;
+      btn.textContent = b.short || b.label;
+      btn.addEventListener('click', () => {
+        syncChips(b.key);
+        const stores = SearchManager.setFilter(b.key);
+        renderMarkers(stores);
+        UIManager.renderStoreList(stores, store => {
+          MapManager.panTo(store.lat, store.lng);
+          UIManager.openSheet(store);
+        });
+        updateMapPanel(stores);
+      });
+      bar.appendChild(btn);
+    });
+  }
+
   function initMapPanel() {
     const panel  = document.getElementById('mapPanel');
     const handle = document.getElementById('mapPanelHandle');
@@ -148,18 +180,29 @@ const App = (() => {
       panel.classList.contains('expanded') ? collapseMapPanel() : expandMapPanel();
     });
 
-    // 패널 위에서 아래로 스와이프 → 접기
-    let startY = 0;
-    panel.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    // 스와이프 감지 — 거리 + 속도 조합으로 민감도 조절
+    let startY = 0, startT = 0;
+
+    panel.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY; startT = Date.now();
+    }, { passive: true });
     panel.addEventListener('touchend', e => {
-      if (e.changedTouches[0].clientY - startY > 50) collapseMapPanel();
+      const dy  = e.changedTouches[0].clientY - startY;
+      const vel = dy / Math.max(Date.now() - startT, 1); // px/ms
+      // 느리게 80px 이상 OR 빠르게 40px 이상 아래로
+      if (dy > 80 || (dy > 40 && vel > 0.6)) collapseMapPanel();
     }, { passive: true });
 
     // 지도 위에서 위로 스와이프 → 펼치기
-    mapEl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    mapEl.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY; startT = Date.now();
+    }, { passive: true });
     mapEl.addEventListener('touchend', e => {
       if (!document.body.classList.contains('map-mode')) return;
-      if (startY - e.changedTouches[0].clientY > 50) expandMapPanel();
+      const dy  = startY - e.changedTouches[0].clientY;
+      const vel = dy / Math.max(Date.now() - startT, 1);
+      // 느리게 80px 이상 OR 빠르게 40px 이상 위로
+      if (dy > 80 || (dy > 40 && vel > 0.6)) expandMapPanel();
     }, { passive: true });
   }
 
@@ -239,8 +282,7 @@ const App = (() => {
     // 브랜드 필터 칩
     document.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', async () => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
+        syncChips(chip.dataset.brand);
         const stores = SearchManager.setFilter(chip.dataset.brand);
         renderMarkers(stores);
         UIManager.renderStoreList(stores, store => {
@@ -336,6 +378,7 @@ const App = (() => {
     MapManager.init();
     bindEvents();
     bindAddrModal();
+    initMapBrandBar();
     initMapPanel();
 
     // 기본 탭이 '지도'이므로 초기에 map-mode 적용 후 재렌더링

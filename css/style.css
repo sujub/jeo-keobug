@@ -206,6 +206,48 @@ body.map-mode .brand-filters {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ─── 지도 위 브랜드 필터바 ─────────────────── */
+.map-brand-bar {
+  position: absolute;
+  top: 10px;
+  left: 0; right: 0;
+  z-index: 20;
+  display: none;
+  flex-direction: row;
+  gap: 6px;
+  padding: 0 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+.map-brand-bar::-webkit-scrollbar { display: none; }
+body.map-mode .map-brand-bar { display: flex; }
+
+.map-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255,255,255,0.95);
+  color: #333;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.map-chip.active {
+  background: var(--green-dark);
+  color: #fff;
+}
+.map-chip:active { transform: scale(0.94); }
+
 .my-loc-btn {
   position: absolute;
   left: 10px;
