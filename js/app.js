@@ -352,8 +352,8 @@ const App = (() => {
       if (loc.lat) runSearch(loc.lat, loc.lng);
     });
 
-    // 개인정보 동의 확인 후 위치 탐색 시작
-    UIManager.showPrivacyModal(async () => {
+    // 위치 탐색 시작 함수
+    async function startLocation() {
       try {
         const { lat, lng } = await getLocation();
         MapManager.setMyLocation(lat, lng);
@@ -365,7 +365,14 @@ const App = (() => {
         UIManager.setLoading(false);
         openAddrModal();
       }
-    });
+    }
+
+    // 이미 동의했으면 바로 시작, 아니면 동의 이벤트 대기
+    if (localStorage.getItem('jkb_privacy_agreed')) {
+      startLocation();
+    } else {
+      window.addEventListener('jkb:privacy-agreed', startLocation, { once: true });
+    }
   }
 
   return { init };

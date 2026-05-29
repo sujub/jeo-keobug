@@ -568,6 +568,26 @@ body.map-mode .map-panel { display: flex; }
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
+.privacy-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: var(--font);
+}
+.privacy-close:active { background: #ddd; }
+.privacy-box { position: relative; } /* X 버튼 absolute 기준 */
 .privacy-logo { font-size: 36px; text-align: center; }
 .privacy-title {
   font-size: 17px;

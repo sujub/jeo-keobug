@@ -92,6 +92,7 @@
   <!-- 개인정보 동의 모달 (최초 1회) -->
   <div class="privacy-modal" id="privacyModal">
     <div class="privacy-box">
+      <button class="privacy-close" id="privacyCloseBtn" aria-label="닫기">✕</button>
       <div class="privacy-logo">🐝</div>
       <div class="privacy-title">저커버그 서비스 이용 안내</div>
       <div class="privacy-body">
@@ -121,6 +122,23 @@
       <p class="privacy-note">이 안내는 최초 1회만 표시됩니다</p>
     </div>
   </div>
+  <!-- 개인정보 모달 — SDK와 독립적으로 즉시 실행 -->
+  <script>
+    (function () {
+      var KEY   = 'jkb_privacy_agreed';
+      var modal = document.getElementById('privacyModal');
+      // 이미 동의했으면 바로 숨김
+      if (localStorage.getItem(KEY)) { modal.classList.add('hidden'); return; }
+      function dismiss() {
+        localStorage.setItem(KEY, '1');
+        modal.classList.add('hidden');
+        setTimeout(function () { if (modal.parentNode) modal.remove(); }, 350);
+        window.dispatchEvent(new CustomEvent('jkb:privacy-agreed'));
+      }
+      document.getElementById('privacyConfirmBtn').addEventListener('click', dismiss);
+      document.getElementById('privacyCloseBtn').addEventListener('click', dismiss);
+    })();
+  </script>
 
   <!-- 지도 모드 슬라이드업 목록 패널 -->
   <div class="map-panel" id="mapPanel">

@@ -298,30 +298,8 @@ const UIManager = (() => {
     retryBtn.onclick = retryCb;
   }
 
-  // ── 개인정보 동의 모달 (최초 1회) ──────────────────────
-  const PRIVACY_KEY = 'jkb_privacy_agreed';
-
-  function showPrivacyModal(onConfirm) {
-    if (localStorage.getItem(PRIVACY_KEY)) { onConfirm(); return; }
-
-    const modal = document.getElementById('privacyModal');
-    const btn   = document.getElementById('privacyConfirmBtn');
-    if (!modal || !btn) { onConfirm(); return; }
-
-    modal.classList.remove('hidden');
-
-    btn.addEventListener('click', () => {
-      localStorage.setItem(PRIVACY_KEY, '1');
-      modal.classList.add('hidden');
-      // 애니메이션 끝나면 DOM 제거
-      setTimeout(() => modal.remove(), 320);
-      onConfirm();
-    }, { once: true });
-  }
-
   return {
     renderStoreList, renderFavList, openSheet, closeSheet,
     setLoading, setLocLabel, startClock, showToast, renderError,
-    showPrivacyModal,
   };
 })();
