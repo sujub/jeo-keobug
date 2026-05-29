@@ -65,6 +65,7 @@ const App = (() => {
         MapManager.panTo(store.lat, store.lng);
         UIManager.openSheet(store);
       });
+      updateMapPanel(stores); // 슬라이드 패널 카운트 갱신
     } catch (err) {
       console.error('[저커버그]', err);
       const msg = err.message || '검색 중 오류가 발생했어요.';
@@ -73,6 +74,93 @@ const App = (() => {
     } finally {
       UIManager.setLoading(false);
     }
+  }
+
+  // ── 슬라이드업 패널 ─────────────────────────────────────
+  function updateMapPanel(stores) {
+    const label = document.getElementById('mapPanelLabel');
+    if (!label) return;
+    label.textContent = stores.length > 0
+      ? `매장 ${stores.length}개 · 위로 밀어 목록 보기 ↑`
+      : '주변 매장이 없어요 😅';
+  }
+
+  function renderMapPanelList() {
+    const body = document.getElementById('mapPanelList');
+    if (!body) return;
+    const stores = SearchManager.getFilteredStores();
+    body.innerHTML = '';
+    if (stores.length === 0) {
+      body.innerHTML = '<div style="padding:24px;text-align:center;color:#aaa;font-size:13px;">주변 매장이 없어요 😅</div>';
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    stores.forEach(store => {
+      const brand = SearchManager.getBrand(store.brandKey)
+        || { color: '#555', bg: '#f5f5f5', short: '?', label: store.brandKey };
+      const el = document.createElement('div');
+      el.className = 'store-item';
+      el.tabIndex = 0;
+      const distM = store.distance;
+      const dist  = distM < 1000 ? `${Math.round(distM)}m` : `${(distM/1000).toFixed(1)}km`;
+      el.innerHTML =
+        `<div class="store-badge" style="background:${brand.bg};color:${brand.color};">${brand.short}</div>` +
+        `<div class="store-info">` +
+        `<div class="store-name">${store.name}</div>` +
+        `<div class="store-addr">${store.address}</div>` +
+        `<div class="store-meta"><span class="dist" style="color:${brand.color}">📍 ${dist}</span>` +
+        (store.phone ? `<span class="phone">📞 ${store.phone}</span>` : '') +
+        `</div></div><span class="arrow">›</span>`;
+      el.addEventListener('click', () => {
+        MapManager.panTo(store.lat, store.lng);
+        UIManager.openSheet(store);
+        collapseMapPanel();
+      });
+      frag.appendChild(el);
+    });
+    body.appendChild(frag);
+  }
+
+  function expandMapPanel() {
+    const panel = document.getElementById('mapPanel');
+    if (!panel) return;
+    renderMapPanelList();
+    panel.classList.add('expanded');
+  }
+
+  function collapseMapPanel() {
+    const panel = document.getElementById('mapPanel');
+    if (panel) panel.classList.remove('expanded');
+  }
+
+  function initMapPanel() {
+    const panel  = document.getElementById('mapPanel');
+    const handle = document.getElementById('mapPanelHandle');
+    const mapEl  = document.getElementById('map');
+    if (!panel || !handle) return;
+
+    // bottom-nav 높이만큼 패널 위치 조정
+    const navH = document.querySelector('.bottom-nav')?.offsetHeight || 60;
+    panel.style.bottom = navH + 'px';
+
+    // 핸들 탭 → 토글
+    handle.addEventListener('click', () => {
+      panel.classList.contains('expanded') ? collapseMapPanel() : expandMapPanel();
+    });
+
+    // 패널 위에서 아래로 스와이프 → 접기
+    let startY = 0;
+    panel.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    panel.addEventListener('touchend', e => {
+      if (e.changedTouches[0].clientY - startY > 50) collapseMapPanel();
+    }, { passive: true });
+
+    // 지도 위에서 위로 스와이프 → 펼치기
+    mapEl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    mapEl.addEventListener('touchend', e => {
+      if (!document.body.classList.contains('map-mode')) return;
+      if (startY - e.changedTouches[0].clientY > 50) expandMapPanel();
+    }, { passive: true });
   }
 
   // ── 수동 주소 입력 모달 ─────────────────────────────────
@@ -220,6 +308,7 @@ const App = (() => {
         // 지도 탭: 목록 숨기고 지도 확장 / 나머지: 원래 레이아웃
         const isMapMode = tab === 'map';
         document.body.classList.toggle('map-mode', isMapMode);
+        collapseMapPanel(); // 탭 전환 시 패널 닫기
         // CSS 전환(300ms) 후 지도 캔버스 크기 재계산
         setTimeout(() => MapManager.relayout(), 320);
 
@@ -247,6 +336,9 @@ const App = (() => {
     MapManager.init();
     bindEvents();
     bindAddrModal();
+
+    // 슬라이드 패널 초기화
+    initMapPanel();
 
     // 기본 탭이 '지도'이므로 초기에 map-mode 적용 후 재렌더링
     document.body.classList.add('map-mode');

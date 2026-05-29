@@ -13,7 +13,10 @@
   --radius: 12px;
 }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  height: -webkit-fill-available; /* 구형 iOS/Android 뷰포트 버그 수정 */
+}
 
 /* body를 flex 컬럼으로 — 복잡한 calc 없이 레이아웃 */
 body {
@@ -23,8 +26,9 @@ body {
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
-  height: 100vh;        /* fallback */
-  height: 100dvh;       /* 모바일 동적 주소창 대응 */
+  height: 100vh;                   /* fallback */
+  height: -webkit-fill-available;  /* 구형 Safari/Android 대응 */
+  height: 100dvh;                  /* 최신 브라우저 동적 주소창 대응 */
   overflow: hidden;
 }
 
@@ -269,7 +273,8 @@ body.map-mode .brand-filters {
 
 /* ─── 매장 목록 — flex: 1 로 남은 공간 채움 ── */
 .store-list {
-  flex: 1;
+  flex: 1 1 0%;      /* flex-basis: 0% — 소형폰에서 높이 계산 오류 방지 */
+  min-height: 80px;  /* 극단적으로 작은 화면에서 최소 높이 보장 */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--bg);
@@ -340,6 +345,51 @@ body.map-mode .brand-filters {
 .dist  { font-size: 10px; font-weight: 600; }
 .phone { font-size: 10px; color: var(--text-sub); }
 .arrow { font-size: 18px; color: #ccc; flex-shrink: 0; }
+
+/* ─── 지도 모드 슬라이드업 패널 ────────────── */
+.map-panel {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;                /* JS에서 bottom-nav 높이만큼 조정 */
+  background: var(--card-bg);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.13);
+  display: none;            /* 기본 숨김 */
+  flex-direction: column;
+  max-height: 70vh;
+  z-index: 40;
+  transform: translateY(calc(100% - 52px));   /* 핸들바만 peek */
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+body.map-mode .map-panel { display: flex; }
+.map-panel.expanded       { transform: translateY(0); }
+
+.map-panel-handle {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.map-panel-pill {
+  width: 36px; height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+}
+.map-panel-label {
+  font-size: 11px;
+  color: var(--text-sub);
+  font-weight: 500;
+}
+.map-panel-list {
+  flex: 1 1 0%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 /* ─── 하단 내비게이션 ───────────────────────── */
 .bottom-nav {
