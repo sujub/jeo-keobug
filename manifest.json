@@ -1,0 +1,25 @@
+{
+  "name": "저커버그 — 내 주변 저가커피",
+  "short_name": "저커버그",
+  "description": "내 주변 저가 커피 브랜드 매장을 실시간으로 찾아드려요",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f5a623",
+  "orientation": "portrait",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

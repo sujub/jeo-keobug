@@ -1,6 +1,9 @@
 # API 키 파일 — 절대 커밋 금지
 js/keys.js
 
+# 내부 전략 문서 — 비공개
+ROADMAP.md
+
 # 시스템 파일
 .DS_Store
 Thumbs.db

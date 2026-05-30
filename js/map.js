@@ -169,10 +169,15 @@ const MapManager = (() => {
     map.setBounds(bounds, 60, 30, 80, 30);
   }
 
-  // ── 특정 위치로 이동 ─────────────────────────────────────
+  // ── 특정 위치로 이동 (즉시) ─────────────────────────────
   function panTo(lat, lng) {
     map.setCenter(new kakao.maps.LatLng(lat, lng));
     map.setLevel(3);
+  }
+
+  // ── 현재 위치로 부드럽게 이동 ────────────────────────────
+  function smoothPanTo(lat, lng) {
+    map.panTo(new kakao.maps.LatLng(lat, lng));
   }
 
   function fmtDist(m) {
@@ -185,5 +190,5 @@ const MapManager = (() => {
   // 컨테이너 크기 변경 후 지도 재렌더링
   function relayout()       { if (map) map.relayout(); }
 
-  return { init, setMyLocation, addStoreMarker, clearMarkers, fitBounds, panTo, getMap, closeOverlay, isBoundSet, setBoundSet, relayout };
+  return { init, setMyLocation, addStoreMarker, clearMarkers, fitBounds, panTo, smoothPanTo, getMap, closeOverlay, isBoundSet, setBoundSet, relayout };
 })();

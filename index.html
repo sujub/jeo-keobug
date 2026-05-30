@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>저커버그 — 내 주변 저가커피</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f5a623">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="저커버그">
+  <link rel="apple-touch-icon" href="/images/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -62,6 +68,7 @@
       <span>탐색 중...</span>
     </div>
     <button class="my-loc-btn" id="myLocBtn" title="내 위치로">⊕</button>
+    <button class="myloc-label-btn" id="myLocLabelBtn">📍 내위치</button>
     <div class="count-badge" id="countBadge">매장 0개</div>
   </div>
 
@@ -121,7 +128,7 @@
         </div>
       </div>
       <button class="privacy-btn" id="privacyConfirmBtn">확인하고 시작하기</button>
-      <p class="privacy-note">이 안내는 최초 1회만 표시됩니다</p>
+      <p class="privacy-note">이 안내는 최초 1회만 표시됩니다 · <a href="/privacy.html" target="_blank" style="color:#f5a623;">개인정보처리방침</a></p>
     </div>
   </div>
   <!-- 개인정보 모달 — SDK와 독립적으로 즉시 실행 -->
@@ -141,15 +148,6 @@
       document.getElementById('privacyCloseBtn').addEventListener('click', dismiss);
     })();
   </script>
-
-  <!-- 지도 모드 슬라이드업 목록 패널 -->
-  <div class="map-panel" id="mapPanel">
-    <div class="map-panel-handle" id="mapPanelHandle">
-      <span class="map-panel-pill"></span>
-      <span class="map-panel-label" id="mapPanelLabel">위로 밀어 목록 보기 ↑</span>
-    </div>
-    <div class="map-panel-list" id="mapPanelList"></div>
-  </div>
 
   <!-- 바텀시트 (fixed overlay) -->
   <div class="sheet" id="sheet">
@@ -172,6 +170,11 @@
   </div>
 
   <!-- JS -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+    }
+  </script>
   <script src="js/keys.js"></script>
   <script src="js/config.js"></script>
   <script src="js/map.js"></script>

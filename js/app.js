@@ -56,6 +56,7 @@ const App = (() => {
 
   // ── 검색 실행 ───────────────────────────────────────────
   async function runSearch(lat, lng) {
+    currentPos = { lat, lng };
     UIManager.setLoading(true);
     MapManager.setBoundSet(false);
     try {
@@ -65,7 +66,6 @@ const App = (() => {
         MapManager.panTo(store.lat, store.lng);
         UIManager.openSheet(store);
       });
-      updateMapPanel(stores); // 슬라이드 패널 카운트 갱신
     } catch (err) {
       console.error('[저커버그]', err);
       const msg = err.message || '검색 중 오류가 발생했어요.';
@@ -74,63 +74,6 @@ const App = (() => {
     } finally {
       UIManager.setLoading(false);
     }
-  }
-
-  // ── 슬라이드업 패널 ─────────────────────────────────────
-  function updateMapPanel(stores) {
-    const label = document.getElementById('mapPanelLabel');
-    if (!label) return;
-    label.textContent = stores.length > 0
-      ? `매장 ${stores.length}개 · 위로 밀어 목록 보기 ↑`
-      : '주변 매장이 없어요 😅';
-  }
-
-  function renderMapPanelList() {
-    const body = document.getElementById('mapPanelList');
-    if (!body) return;
-    const stores = SearchManager.getFilteredStores();
-    body.innerHTML = '';
-    if (stores.length === 0) {
-      body.innerHTML = '<div style="padding:24px;text-align:center;color:#aaa;font-size:13px;">주변 매장이 없어요 😅</div>';
-      return;
-    }
-    const frag = document.createDocumentFragment();
-    stores.forEach(store => {
-      const brand = SearchManager.getBrand(store.brandKey)
-        || { color: '#555', bg: '#f5f5f5', short: '?', label: store.brandKey };
-      const el = document.createElement('div');
-      el.className = 'store-item';
-      el.tabIndex = 0;
-      const distM = store.distance;
-      const dist  = distM < 1000 ? `${Math.round(distM)}m` : `${(distM/1000).toFixed(1)}km`;
-      el.innerHTML =
-        `<div class="store-badge" style="background:${brand.bg};color:${brand.color};">${brand.short}</div>` +
-        `<div class="store-info">` +
-        `<div class="store-name">${store.name}</div>` +
-        `<div class="store-addr">${store.address}</div>` +
-        `<div class="store-meta"><span class="dist" style="color:${brand.color}">📍 ${dist}</span>` +
-        (store.phone ? `<span class="phone">📞 ${store.phone}</span>` : '') +
-        `</div></div><span class="arrow">›</span>`;
-      el.addEventListener('click', () => {
-        MapManager.panTo(store.lat, store.lng);
-        UIManager.openSheet(store);
-        collapseMapPanel();
-      });
-      frag.appendChild(el);
-    });
-    body.appendChild(frag);
-  }
-
-  function expandMapPanel() {
-    const panel = document.getElementById('mapPanel');
-    if (!panel) return;
-    renderMapPanelList();
-    panel.classList.add('expanded');
-  }
-
-  function collapseMapPanel() {
-    const panel = document.getElementById('mapPanel');
-    if (panel) panel.classList.remove('expanded');
   }
 
   // ── 지도 위 브랜드 필터바 ───────────────────────────────
@@ -163,47 +106,6 @@ const App = (() => {
       });
       bar.appendChild(btn);
     });
-  }
-
-  function initMapPanel() {
-    const panel  = document.getElementById('mapPanel');
-    const handle = document.getElementById('mapPanelHandle');
-    const mapEl  = document.getElementById('map');
-    if (!panel || !handle) return;
-
-    // bottom-nav 높이만큼 패널 위치 조정
-    const navH = document.querySelector('.bottom-nav')?.offsetHeight || 60;
-    panel.style.bottom = navH + 'px';
-
-    // 핸들 탭 → 토글
-    handle.addEventListener('click', () => {
-      panel.classList.contains('expanded') ? collapseMapPanel() : expandMapPanel();
-    });
-
-    // 스와이프 감지 — 거리 + 속도 조합으로 민감도 조절
-    let startY = 0, startT = 0;
-
-    panel.addEventListener('touchstart', e => {
-      startY = e.touches[0].clientY; startT = Date.now();
-    }, { passive: true });
-    panel.addEventListener('touchend', e => {
-      const dy  = e.changedTouches[0].clientY - startY;
-      const vel = dy / Math.max(Date.now() - startT, 1); // px/ms
-      // 느리게 80px 이상 OR 빠르게 40px 이상 아래로
-      if (dy > 80 || (dy > 40 && vel > 0.6)) collapseMapPanel();
-    }, { passive: true });
-
-    // 지도 위에서 위로 스와이프 → 펼치기
-    mapEl.addEventListener('touchstart', e => {
-      startY = e.touches[0].clientY; startT = Date.now();
-    }, { passive: true });
-    mapEl.addEventListener('touchend', e => {
-      if (!document.body.classList.contains('map-mode')) return;
-      const dy  = startY - e.changedTouches[0].clientY;
-      const vel = dy / Math.max(Date.now() - startT, 1);
-      // 느리게 80px 이상 OR 빠르게 40px 이상 위로
-      if (dy > 80 || (dy > 40 && vel > 0.6)) expandMapPanel();
-    }, { passive: true });
   }
 
   // ── 수동 주소 입력 모달 ─────────────────────────────────
@@ -262,9 +164,21 @@ const App = (() => {
   }
 
   // ── 이벤트 바인딩 ───────────────────────────────────────
+  // 현재 위치 저장 (내위치 버튼용)
+  let currentPos = null;
+
   function bindEvents() {
 
-    // 내 위치 버튼 (지도 위 ⊕)
+    // 내위치 버튼 — 현재 GPS 위치로 부드럽게 이동
+    document.getElementById('myLocLabelBtn').addEventListener('click', () => {
+      if (currentPos) {
+        MapManager.smoothPanTo(currentPos.lat, currentPos.lng);
+      } else {
+        UIManager.showToast('위치 정보가 없어요. ⊕ 버튼으로 위치를 먼저 탐색해 주세요.', 'error');
+      }
+    });
+
+    // ⊕ 버튼 (지도 위) — 위치 새로 탐색
     document.getElementById('myLocBtn').addEventListener('click', async () => {
       try {
         UIManager.setLoading(true);
@@ -350,7 +264,6 @@ const App = (() => {
         // 지도 탭: 목록 숨기고 지도 확장 / 나머지: 원래 레이아웃
         const isMapMode = tab === 'map';
         document.body.classList.toggle('map-mode', isMapMode);
-        collapseMapPanel(); // 탭 전환 시 패널 닫기
         // CSS 전환(300ms) 후 지도 캔버스 크기 재계산
         setTimeout(() => MapManager.relayout(), 320);
 
@@ -379,7 +292,6 @@ const App = (() => {
     bindEvents();
     bindAddrModal();
     initMapBrandBar();
-    initMapPanel();
 
     // 기본 탭이 '지도'이므로 초기에 map-mode 적용 후 재렌더링
     document.body.classList.add('map-mode');
