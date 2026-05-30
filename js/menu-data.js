@@ -11,6 +11,7 @@ const MENU_DATA = {
   '메가MGC커피': {
     appUrl: 'https://www.mega-mgccoffee.com/',
     updatedAt: '2025.08',
+    hours: { open: 7, close: 22 },
     categories: [
       {
         name: '☕ 에스프레소',
@@ -52,6 +53,7 @@ const MENU_DATA = {
   '컴포즈커피': {
     appUrl: 'https://www.compose-coffee.com/',
     updatedAt: '2025.08',
+    hours: { open: 7, close: 22 },
     categories: [
       {
         name: '☕ 에스프레소',
@@ -91,6 +93,7 @@ const MENU_DATA = {
   '빽다방': {
     appUrl: 'https://www.paik.co.kr/',
     updatedAt: '2025.08',
+    hours: { open: 7, close: 22 },
     categories: [
       {
         name: '☕ 커피',
@@ -129,6 +132,7 @@ const MENU_DATA = {
   '매머드커피': {
     appUrl: 'https://mammothcoffee.co.kr/',
     updatedAt: '2025.08',
+    hours: { open: 8, close: 22 },
     categories: [
       {
         name: '☕ 에스프레소',
@@ -165,6 +169,7 @@ const MENU_DATA = {
   '더벤티': {
     appUrl: 'https://theventi.co.kr/',
     updatedAt: '2025.08',
+    hours: { open: 8, close: 22 },
     categories: [
       {
         name: '☕ 커피',
@@ -203,6 +208,7 @@ const MENU_DATA = {
   '하삼동커피': {
     appUrl: 'https://www.hasamdong.com/',
     updatedAt: '2025.08',
+    hours: { open: 8, close: 21 },
     categories: [
       {
         name: '☕ 커피',
@@ -238,6 +244,7 @@ const MENU_DATA = {
   '우지커피': {
     appUrl: 'https://wooji.co.kr/',
     updatedAt: '2025.08',
+    hours: { open: 8, close: 21 },
     categories: [
       {
         name: '☕ 커피',

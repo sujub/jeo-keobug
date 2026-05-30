@@ -111,7 +111,8 @@ const MenuManager = (() => {
     const header = document.getElementById('menuModalHeader');
     const link = document.getElementById('menuOfficialLink');
 
-    brandEl.textContent = `🍽️ ${brandLabel} 메뉴판`;
+    const updated = data?.updatedAt ? ` · ${data.updatedAt} 기준` : '';
+    brandEl.innerHTML = `🍽️ ${brandLabel} 메뉴판<span style="font-size:10px;color:#aaa;font-weight:400;margin-left:6px;">${updated}</span>`;
     header.style.borderBottom = `2px solid ${brandColor}20`;
     link.href = data?.appUrl || '#';
 

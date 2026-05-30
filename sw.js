@@ -1,4 +1,4 @@
-const CACHE = 'jkb-v1';
+const CACHE = 'jkb-v3';
 const PRECACHE = [
   '/',
   '/index.html',

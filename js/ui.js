@@ -140,6 +140,20 @@ const UIManager = (() => {
       phoneLink.textContent = store.phone;
       phoneRow.appendChild(phoneIcon);
       phoneRow.appendChild(phoneLink);
+
+      // 영업시간 뱃지
+      const menuData = (typeof MENU_DATA !== 'undefined') ? MENU_DATA[store.brandKey] : null;
+      if (menuData?.hours) {
+        const h = new Date().getHours();
+        const isOpen = h >= menuData.hours.open && h < menuData.hours.close;
+        const badge = document.createElement('span');
+        badge.className = isOpen ? 'hours-badge open' : 'hours-badge closed';
+        badge.textContent = isOpen
+          ? `영업중 (~${menuData.hours.close}시)`
+          : `영업종료 (${menuData.hours.open}시~)`;
+        phoneRow.appendChild(badge);
+      }
+
       rows.appendChild(phoneRow);
     }
 
