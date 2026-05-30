@@ -149,8 +149,8 @@ const UIManager = (() => {
         const badge = document.createElement('span');
         badge.className = isOpen ? 'hours-badge open' : 'hours-badge closed';
         badge.textContent = isOpen
-          ? `영업중 (~${brandHours.close}시)`
-          : `영업종료 (${brandHours.open}시~)`;
+          ? `영업중 (~${brandHours.close}시 기준)`
+          : `영업종료 (${brandHours.open}시~ 기준)`;
         phoneRow.appendChild(badge);
       }
 
@@ -203,6 +203,36 @@ const UIManager = (() => {
   function closeSheet() {
     document.getElementById('sheet').classList.remove('open');
     document.getElementById('backdrop').classList.remove('show');
+  }
+
+  // ── 탐색 결과 요약 카드 업데이트 ───────────────────────
+  function updateSummaryCard(stores) {
+    const statsEl  = document.getElementById('summaryStats');
+    const emptyEl  = document.getElementById('summaryEmpty');
+    const countEl  = document.getElementById('summaryCount');
+    const nearestEl= document.getElementById('summaryNearest');
+    const radiusEl = document.getElementById('summaryRadius');
+
+    if (!stores || stores.length === 0) {
+      statsEl.style.display  = 'none';
+      emptyEl.style.display  = 'block';
+      return;
+    }
+
+    statsEl.style.display  = 'flex';
+    emptyEl.style.display  = 'none';
+
+    const nearest = Math.round(stores[0].distance);
+    const nearestStr = nearest >= 1000
+      ? `${(nearest / 1000).toFixed(1)}k`
+      : String(nearest);
+
+    const r = CONFIG.DEFAULT_RADIUS;
+    const radiusStr = r >= 1000 ? `${r / 1000}km` : `${r}m`;
+
+    countEl.textContent   = stores.length;
+    nearestEl.textContent = nearestStr;
+    radiusEl.textContent  = radiusStr;
   }
 
   function setLoading(on) {
@@ -315,5 +345,6 @@ const UIManager = (() => {
   return {
     renderStoreList, renderFavList, openSheet, closeSheet,
     setLoading, setLocLabel, startClock, showToast, renderError,
+    updateSummaryCard,
   };
 })();

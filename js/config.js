@@ -16,14 +16,15 @@ const CONFIG = {
     return (typeof KAKAO_KEYS !== 'undefined') ? KAKAO_KEYS.JS_KEY : '';
   },
 
+  // hours: 각 브랜드 본사 표준 권장 시간 기준 (가맹점마다 다를 수 있음)
   BRANDS: [
     { key: '메가MGC커피',  label: '메가커피', query: '메가MGC커피',  short: '메가',   color: '#bf360c', bg: '#fff3e0', pin: 'M', hours: { open: 7, close: 22 } },
     { key: '컴포즈커피',   label: '컴포즈',   query: '컴포즈커피',   short: '컴포즈', color: '#1b5e20', bg: '#e8f5e9', pin: 'C', hours: { open: 7, close: 22 } },
     { key: '빽다방',       label: '빽다방',   query: '빽다방',       short: '빽다방', color: '#e65100', bg: '#fffde7', pin: 'P', hours: { open: 7, close: 22 } },
     { key: '매머드커피',   label: '매머드',   query: '매머드커피',   short: '매머드', color: '#880e4f', bg: '#fce4ec', pin: 'E', hours: { open: 8, close: 22 } },
     { key: '더벤티',       label: '더벤티',   query: '더벤티',       short: '벤티',   color: '#0d47a1', bg: '#e3f2fd', pin: 'V', hours: { open: 8, close: 22 } },
-    { key: '하삼동커피',   label: '하삼동',   query: '하삼동커피',   short: '하삼동', color: '#4e342e', bg: '#efebe9', pin: 'H', hours: { open: 8, close: 21 } },
-    { key: '우지커피',     label: '우지커피', query: '우지커피',     short: '우지',   color: '#00695c', bg: '#e0f2f1', pin: 'W', hours: { open: 8, close: 21 } },
+    { key: '하삼동커피',   label: '하삼동',   query: '하삼동커피',   short: '하삼동', color: '#4e342e', bg: '#efebe9', pin: 'H', hours: { open: 8, close: 22 } },
+    { key: '우지커피',     label: '우지커피', query: '우지커피',     short: '우지',   color: '#00695c', bg: '#e0f2f1', pin: 'W', hours: { open: 9, close: 21 } },
   ],
 
   RADIUS_OPTIONS: [500, 1000, 2000, 3000],

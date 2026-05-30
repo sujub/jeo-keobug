@@ -62,6 +62,7 @@ const App = (() => {
     try {
       const stores = await SearchManager.searchAllBrands(lat, lng);
       renderMarkers(stores);
+      UIManager.updateSummaryCard(stores);
       UIManager.renderStoreList(stores, store => {
         MapManager.panTo(store.lat, store.lng);
         UIManager.openSheet(store);
@@ -225,8 +226,9 @@ const App = (() => {
     document.getElementById('radiusBtn').addEventListener('click', async () => {
       ridx = (ridx + 1) % opts.length;
       CONFIG.DEFAULT_RADIUS = opts[ridx];
-      document.getElementById('radiusLabel').textContent =
-        opts[ridx] >= 1000 ? `${opts[ridx] / 1000}km` : `${opts[ridx]}m`;
+      const label = opts[ridx] >= 1000 ? `${opts[ridx] / 1000}km` : `${opts[ridx]}m`;
+      document.getElementById('radiusLabel').textContent = label;
+      document.getElementById('summaryRadius') && (document.getElementById('summaryRadius').textContent = label);
       SearchManager.setRadius(opts[ridx]);
       const loc = SearchManager.getCurrentLocation();
       if (loc.lat) await runSearch(loc.lat, loc.lng);

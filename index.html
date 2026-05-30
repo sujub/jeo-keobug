@@ -72,9 +72,30 @@
     <div class="count-badge" id="countBadge">매장 0개</div>
   </div>
 
+  <!-- 탐색 결과 요약 카드 -->
+  <div class="summary-card" id="summaryCard">
+    <div class="summary-stats" id="summaryStats">
+      <div class="summary-stat">
+        <span class="summary-num" id="summaryCount">-</span>
+        <span class="summary-label">개 매장</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <span class="summary-num" id="summaryNearest">-</span>
+        <span class="summary-label">m 가장 가까워요</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <span class="summary-num" id="summaryRadius">1km</span>
+        <span class="summary-label">반경 탐색</span>
+      </div>
+    </div>
+    <div class="summary-empty" id="summaryEmpty">📍 위치를 허용하면 주변 매장을 찾아드려요</div>
+  </div>
+
   <!-- 결과바 -->
   <div class="result-bar">
-    <span id="resultText">위치를 허용해 주세요</span>
+    <span id="resultText"></span>
     <div class="sort-btns">
       <button class="sort active" data-sort="distance">거리순</button>
       <button class="sort" data-sort="name">이름순</button>
