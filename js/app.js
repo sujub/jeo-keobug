@@ -289,7 +289,6 @@ const App = (() => {
   async function init() {
     UIManager.startClock();
     MapManager.init();
-    MenuManager.bindEvents();
     bindEvents();
     bindAddrModal();
     initMapBrandBar();
