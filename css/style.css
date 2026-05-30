@@ -542,6 +542,20 @@ body.map-mode .map-brand-bar { display: flex; }
   cursor: pointer;
 }
 .btn-secondary:active { background: #ede8d0; }
+.btn-menu {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+}
+.btn-menu:active { background: #ede8d0; }
 
 /* ─── 백드롭 ────────────────────────────────── */
 .backdrop {
@@ -726,6 +740,182 @@ body.map-mode .map-brand-bar { display: flex; }
 .addr-results li:hover  { background: #f0f7e6; color: var(--green-dark); }
 .addr-results li:active { background: #e8f2d8; }
 .addr-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+
+/* ─── 메뉴판 모달 ──────────────────────────── */
+.menu-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.menu-modal.show { opacity: 1; pointer-events: auto; }
+
+.menu-modal-box {
+  background: var(--card-bg);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  animation: slideUp 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.menu-modal-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 18px 12px;
+  border-bottom: 0.5px solid var(--border);
+}
+.menu-modal-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.menu-modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  border: none;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+}
+.menu-modal-close:active { background: #ddd; }
+
+.menu-modal-tabs {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0;
+  padding: 10px 16px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.menu-tab {
+  flex: 1;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--text-sub);
+  cursor: pointer;
+}
+.menu-tab.active {
+  color: var(--green-dark);
+  border-bottom-color: var(--green-dark);
+  font-weight: 700;
+}
+
+.menu-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 8px;
+}
+
+.menu-category {
+  padding: 14px 16px 4px;
+}
+.menu-category-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 0.5px solid #f0ede0;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item-left { display: flex; align-items: center; gap: 7px; }
+.menu-item-name { font-size: 13px; color: var(--text); font-weight: 400; }
+.menu-tag {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: #fff3e0;
+  color: #e65100;
+}
+.menu-item-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+/* 시즌 메뉴 */
+.seasonal-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.seasonal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid #ffe082;
+}
+.seasonal-left { display: flex; align-items: center; gap: 8px; }
+.seasonal-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #f5a623;
+  color: #fff;
+}
+.seasonal-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.seasonal-price { font-size: 14px; font-weight: 700; color: #e65100; }
+.seasonal-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+.menu-modal-footer {
+  flex-shrink: 0;
+  padding: 10px 16px 16px;
+  border-top: 0.5px solid var(--border);
+}
+.menu-disclaimer {
+  font-size: 10px;
+  color: #bbb;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.menu-official-btn {
+  display: block;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green-dark);
+  text-decoration: none;
+}
+.menu-official-btn:active { background: #ede8d0; }
 
 /* ─── 토스트 ────────────────────────────────── */
 .toast {

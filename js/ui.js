@@ -143,8 +143,37 @@ const UIManager = (() => {
       rows.appendChild(phoneRow);
     }
 
+    // 아메리카노 가격 한 줄 표시
+    const menuData = (typeof MENU_DATA !== 'undefined') ? MENU_DATA[store.brandKey] : null;
+    if (menuData) {
+      const allItems = menuData.categories.flatMap(c => c.items);
+      const americano = allItems.find(i => i.name.includes('아메리카노'));
+      if (americano) {
+        const priceRow = document.createElement('div');
+        priceRow.className = 'sheet-row';
+        priceRow.style.background = brand.bg;
+        priceRow.style.borderRadius = '8px';
+        priceRow.style.padding = '8px 12px';
+        priceRow.style.marginBottom = '4px';
+        priceRow.innerHTML =
+          `<span>☕</span><span style="font-size:12px;color:${brand.color};font-weight:600;">아메리카노 ${americano.price.toLocaleString('ko-KR')}원~</span>`;
+        rows.appendChild(priceRow);
+      }
+    }
+
     const actions = document.createElement('div');
     actions.className = 'sheet-actions';
+
+    // 메뉴 보기 버튼
+    if (menuData) {
+      const menuBtn = document.createElement('button');
+      menuBtn.className = 'btn-menu';
+      menuBtn.innerHTML = `🍽️ <span style="color:${brand.color}">${brand.label}</span> 메뉴판 보기`;
+      menuBtn.addEventListener('click', () => {
+        MenuManager.open(store.brandKey, brand.label, brand.color);
+      });
+      actions.appendChild(menuBtn);
+    }
 
     const navBtn = document.createElement('button');
     navBtn.className = 'btn-primary';
