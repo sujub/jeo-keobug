@@ -141,6 +141,19 @@ const UIManager = (() => {
       phoneRow.appendChild(phoneIcon);
       phoneRow.appendChild(phoneLink);
 
+      // 영업시간 뱃지
+      const brandHours = SearchManager.getBrand(store.brandKey)?.hours;
+      if (brandHours) {
+        const h = new Date().getHours();
+        const isOpen = h >= brandHours.open && h < brandHours.close;
+        const badge = document.createElement('span');
+        badge.className = isOpen ? 'hours-badge open' : 'hours-badge closed';
+        badge.textContent = isOpen
+          ? `영업중 (~${brandHours.close}시)`
+          : `영업종료 (${brandHours.open}시~)`;
+        phoneRow.appendChild(badge);
+      }
+
       rows.appendChild(phoneRow);
     }
 
