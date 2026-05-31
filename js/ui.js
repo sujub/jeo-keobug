@@ -194,32 +194,35 @@ const UIManager = (() => {
 
   // ── 탐색 결과 요약 카드 업데이트 ───────────────────────
   function updateSummaryCard(stores) {
-    const statsEl  = document.getElementById('summaryStats');
-    const emptyEl  = document.getElementById('summaryEmpty');
-    const countEl  = document.getElementById('summaryCount');
-    const nearestEl= document.getElementById('summaryNearest');
-    const radiusEl = document.getElementById('summaryRadius');
+    const statsEl    = document.getElementById('summaryStats');
+    const emptyEl    = document.getElementById('summaryEmpty');
+    const countEl    = document.getElementById('summaryCount');
+    const nameEl     = document.getElementById('summaryNearestName');
+    const distEl     = document.getElementById('summaryNearestDist');
+    const radiusEl   = document.getElementById('summaryRadius');
 
     if (!stores || stores.length === 0) {
-      statsEl.style.display  = 'none';
-      emptyEl.style.display  = 'block';
+      statsEl.style.display = 'none';
+      emptyEl.style.display = 'block';
       return;
     }
 
-    statsEl.style.display  = 'flex';
-    emptyEl.style.display  = 'none';
+    statsEl.style.display = 'flex';
+    emptyEl.style.display = 'none';
 
-    const nearest = Math.round(stores[0].distance);
-    const nearestStr = nearest >= 1000
-      ? `${(nearest / 1000).toFixed(1)}k`
-      : String(nearest);
+    const nearest = stores[0];
+    const dist    = Math.round(nearest.distance);
+    const distStr = dist >= 1000
+      ? `${(dist / 1000).toFixed(1)}km`
+      : `${dist}m`;
 
     const r = CONFIG.DEFAULT_RADIUS;
     const radiusStr = r >= 1000 ? `${r / 1000}km` : `${r}m`;
 
-    countEl.textContent   = stores.length;
-    nearestEl.textContent = nearestStr;
-    radiusEl.textContent  = radiusStr;
+    nameEl.textContent   = nearest.name;
+    distEl.textContent   = distStr;
+    countEl.textContent  = stores.length;
+    radiusEl.textContent = radiusStr;
   }
 
   function setLoading(on) {

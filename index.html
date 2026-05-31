@@ -75,19 +75,14 @@
   <!-- 탐색 결과 요약 카드 -->
   <div class="summary-card" id="summaryCard">
     <div class="summary-stats" id="summaryStats">
-      <div class="summary-stat">
-        <span class="summary-num" id="summaryCount">-</span>
-        <span class="summary-label">개 매장</span>
+      <div class="summary-row-top">
+        <span class="summary-nearest-name" id="summaryNearestName"></span>
+        <span class="summary-nearest-dist" id="summaryNearestDist"></span>
+        <span class="summary-nearest-label">로 가장 가까워요</span>
       </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <span class="summary-num" id="summaryNearest">-</span>
-        <span class="summary-label">m 가장 가까워요</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <span class="summary-num" id="summaryRadius">1km</span>
-        <span class="summary-label">반경 탐색</span>
+      <div class="summary-row-bottom">
+        <span class="summary-chip">📍 <strong id="summaryCount">-</strong>개 매장 발견</span>
+        <span class="summary-chip">🔍 반경 <strong id="summaryRadius">1km</strong></span>
       </div>
     </div>
     <div class="summary-empty" id="summaryEmpty">📍 위치를 허용하면 주변 매장을 찾아드려요</div>

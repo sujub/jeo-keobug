@@ -228,7 +228,6 @@ const App = (() => {
       CONFIG.DEFAULT_RADIUS = opts[ridx];
       const label = opts[ridx] >= 1000 ? `${opts[ridx] / 1000}km` : `${opts[ridx]}m`;
       document.getElementById('radiusLabel').textContent = label;
-      document.getElementById('summaryRadius') && (document.getElementById('summaryRadius').textContent = label);
       SearchManager.setRadius(opts[ridx]);
       const loc = SearchManager.getCurrentLocation();
       if (loc.lat) await runSearch(loc.lat, loc.lng);
