@@ -99,11 +99,11 @@ const App = (() => {
         syncChips(b.key);
         const stores = SearchManager.setFilter(b.key);
         renderMarkers(stores);
+        UIManager.updateSummaryCard(stores);
         UIManager.renderStoreList(stores, store => {
           MapManager.panTo(store.lat, store.lng);
           UIManager.openSheet(store);
         });
-        updateMapPanel(stores);
       });
       bar.appendChild(btn);
     });
@@ -200,6 +200,7 @@ const App = (() => {
         syncChips(chip.dataset.brand);
         const stores = SearchManager.setFilter(chip.dataset.brand);
         renderMarkers(stores);
+        UIManager.updateSummaryCard(stores);
         UIManager.renderStoreList(stores, store => {
           MapManager.panTo(store.lat, store.lng);
           UIManager.openSheet(store);
