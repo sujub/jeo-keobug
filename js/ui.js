@@ -7,7 +7,13 @@ const UIManager = (() => {
   function getFavs() {
     try { return JSON.parse(localStorage.getItem(FAV_KEY) || '{}'); } catch { return {}; }
   }
-  function saveFavs(obj) { localStorage.setItem(FAV_KEY, JSON.stringify(obj)); }
+  function saveFavs(obj) {
+    localStorage.setItem(FAV_KEY, JSON.stringify(obj));
+    // 로그인 상태면 서버에도 동기화
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      Auth.pushFavorites(obj);
+    }
+  }
   function isFav(id) { return !!getFavs()[id]; }
   function toggleFav(store) {
     const favs = getFavs();
@@ -246,8 +252,42 @@ const UIManager = (() => {
     setInterval(tick, 30000);
   }
 
+  // ── 로그인 카드 렌더링 ──────────────────────────────────
+  function renderLoginCard(onLoginCb, onLogoutCb) {
+    const isLoggedIn = typeof Auth !== 'undefined' && Auth.isLoggedIn();
+    const card = document.createElement('div');
+    card.className = 'login-card';
+
+    if (isLoggedIn) {
+      card.innerHTML =
+        `<div class="login-card-icon">☁️</div>` +
+        `<div class="login-card-body">` +
+        `<div class="login-card-title">토스 계정에 동기화 중</div>` +
+        `<div class="login-card-desc">즐겨찾기가 자동으로 저장돼요</div>` +
+        `</div>` +
+        `<button class="btn-logout">로그아웃</button>`;
+      card.querySelector('.btn-logout').addEventListener('click', () => {
+        if (typeof Auth !== 'undefined') Auth.clearSession();
+        if (onLogoutCb) onLogoutCb();
+        showToast('로그아웃됐어요');
+      });
+    } else {
+      card.innerHTML =
+        `<div class="login-card-icon">🤍</div>` +
+        `<div class="login-card-body">` +
+        `<div class="login-card-title">단골 매장을 어디서나 저장하세요</div>` +
+        `<div class="login-card-desc">폰 바꿔도 즐겨찾기가 유지돼요</div>` +
+        `</div>` +
+        `<button class="btn-toss-login" id="btnTossLogin">토스 로그인</button>`;
+      card.querySelector('#btnTossLogin').addEventListener('click', () => {
+        if (onLoginCb) onLoginCb();
+      });
+    }
+    return card;
+  }
+
   // ── 즐겨찾기 목록 렌더링 ────────────────────────────────
-  function renderFavList(onClickCb) {
+  function renderFavList(onClickCb, onLoginCb) {
     const list   = document.getElementById('storeList');
     const empty  = document.getElementById('emptyState');
     const result = document.getElementById('resultText');
@@ -257,8 +297,15 @@ const UIManager = (() => {
     badge.textContent  = `즐겨찾기 ${stores.length}개`;
     result.textContent = `즐겨찾기 ${stores.length}개 매장`;
 
+    list.innerHTML = '';
+
+    // 로그인 카드 항상 상단에 표시
+    const loginCard = renderLoginCard(onLoginCb, () => {
+      renderFavList(onClickCb, onLoginCb);
+    });
+    list.appendChild(loginCard);
+
     if (stores.length === 0) {
-      list.innerHTML = '';
       list.appendChild(empty);
       empty.style.display = 'flex';
       empty.querySelector('p').textContent = '즐겨찾기한 매장이 없어요 🤍';
@@ -266,7 +313,6 @@ const UIManager = (() => {
       return;
     }
 
-    list.innerHTML = '';
     empty.style.display = 'none';
     list.appendChild(empty);
 

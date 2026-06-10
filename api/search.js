@@ -2,9 +2,18 @@
  * api/search.js — Vercel 서버리스 함수
  * Kakao REST API 프록시: REST Key를 서버에서만 보관
  */
+const ALLOWED_ORIGINS = [
+  'https://jeo-keobug.vercel.app',
+  'https://jeokeo-bug.apps.tossmini.com',
+  'https://jeokeo-bug.private-apps.tossmini.com',
+  '저커버그.kr',
+];
+
 export default async function handler(req, res) {
-  // CORS 헤더 (같은 origin에서만 사용하므로 strict)
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin) || origin.endsWith('.tossmini.com')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
 

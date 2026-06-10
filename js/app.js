@@ -270,10 +270,34 @@ const App = (() => {
         setTimeout(() => MapManager.relayout(), 320);
 
         if (tab === 'fav') {
-          UIManager.renderFavList(store => {
-            MapManager.panTo(store.lat, store.lng);
-            UIManager.openSheet(store);
-          });
+          UIManager.renderFavList(
+            // 매장 클릭
+            store => {
+              MapManager.panTo(store.lat, store.lng);
+              UIManager.openSheet(store);
+            },
+            // 토스 로그인 버튼 클릭
+            async () => {
+              const btn = document.getElementById('btnTossLogin');
+              if (btn) { btn.disabled = true; btn.textContent = '로그인 중...'; }
+              try {
+                const userKey = await Auth.login();
+                // 로그인 성공: 기존 로컬 즐겨찾기를 서버와 병합
+                const localFavs = JSON.parse(localStorage.getItem('jkb_favorites') || '{}');
+                const merged    = await Auth.syncOnLogin(localFavs);
+                localStorage.setItem('jkb_favorites', JSON.stringify(merged));
+                UIManager.showToast('로그인 완료! 즐겨찾기가 동기화됐어요 ☁️');
+                // 탭 새로고침
+                UIManager.renderFavList(store => {
+                  MapManager.panTo(store.lat, store.lng);
+                  UIManager.openSheet(store);
+                }, null);
+              } catch (err) {
+                UIManager.showToast(err.message || '로그인에 실패했어요', 'error');
+                if (btn) { btn.disabled = false; btn.textContent = '토스 로그인'; }
+              }
+            }
+          );
         }
         if (tab === 'list') {
           const stores = SearchManager.getFilteredStores();
