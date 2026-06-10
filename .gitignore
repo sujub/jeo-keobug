@@ -1,6 +1,16 @@
 # API 키 파일 — 절대 커밋 금지
 js/keys.js
 
+# SDK 빌드 도구 (로컬 전용 — 커밋 불필요)
+node_modules/
+package-lock.json
+src/
+vite.config.js
+package.json
+
+# 단, 빌드 결과물은 커밋 대상
+# js/toss-sdk-bundle.iife.js  ← 커밋 O
+
 # 내부 전략 문서 — 비공개
 ROADMAP.md
 

@@ -1,10 +1,11 @@
-const CACHE = 'jkb-v4';
+const CACHE = 'jkb-v5';
 const PRECACHE = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/config.js',
   '/js/auth.js',
+  '/js/toss-sdk-bundle.iife.js',
   '/js/map.js',
   '/js/search.js',
   '/js/ui.js',
