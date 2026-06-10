@@ -192,6 +192,64 @@
     }
   </script>
 
+  <!-- 디버그 오버레이 (?debug=1 일 때만 활성) -->
+  <script>
+    (function () {
+      if (!/[?&]debug=1/.test(location.search)) return;
+
+      // 오버레이 생성
+      var box = document.createElement('div');
+      box.id = '_dbg';
+      box.style.cssText = [
+        'position:fixed;bottom:70px;left:0;right:0;max-height:45vh;overflow-y:auto',
+        'background:rgba(0,0,0,0.88);color:#0f0;font:11px/1.4 monospace',
+        'padding:8px;z-index:99999;border-top:2px solid #f00;word-break:break-all'
+      ].join(';');
+
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'color:#ff0;font-weight:bold;margin-bottom:4px;display:flex;justify-content:space-between';
+      hdr.innerHTML = '<span>🐛 DEBUG LOG</span><button onclick="document.getElementById(\'_dbg\').remove()" style="background:none;border:1px solid #f00;color:#f00;padding:0 6px;border-radius:3px;cursor:pointer">✕</button>';
+      box.appendChild(hdr);
+
+      document.addEventListener('DOMContentLoaded', function () {
+        document.body.appendChild(box);
+      });
+
+      function addLog(type, args) {
+        var line = document.createElement('div');
+        line.style.color = type === 'error' ? '#f88' : type === 'warn' ? '#ff8' : '#0f0';
+        line.style.borderBottom = '1px solid #333';
+        line.style.padding = '2px 0';
+        var msg = Array.from(args).map(function(a) {
+          try { return typeof a === 'object' ? JSON.stringify(a) : String(a); } catch(e) { return '[obj]'; }
+        }).join(' ');
+        line.textContent = '[' + type.toUpperCase() + '] ' + msg;
+        box.appendChild(line);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      // console 가로채기
+      ['log','warn','error','info'].forEach(function(m) {
+        var orig = console[m].bind(console);
+        console[m] = function() { orig.apply(console, arguments); addLog(m, arguments); };
+      });
+
+      // 전역 에러 캐치
+      window.addEventListener('error', function(e) {
+        addLog('error', [e.message + ' @ ' + e.filename + ':' + e.lineno]);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        addLog('error', ['Promise reject: ' + (e.reason?.message || e.reason)]);
+      });
+
+      // SDK 상태 즉시 로그
+      setTimeout(function() {
+        console.log('__tossSDK:', window.__tossSDK ? 'OK ✓' : 'undefined ✗');
+        console.log('UA:', navigator.userAgent.slice(0, 80));
+      }, 1500);
+    })();
+  </script>
+
   <!-- 앱인토스 SDK (로컬 IIFE 번들 — Toss WebView CSP 대응) -->
   <script src="js/toss-sdk-bundle.iife.js" onerror="console.info('[저커버그] Toss SDK 번들 로드 실패')"></script>
 
