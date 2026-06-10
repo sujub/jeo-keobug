@@ -1,9 +1,10 @@
-const CACHE = 'jkb-v3';
+const CACHE = 'jkb-v4';
 const PRECACHE = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/config.js',
+  '/js/auth.js',
   '/js/map.js',
   '/js/search.js',
   '/js/ui.js',
